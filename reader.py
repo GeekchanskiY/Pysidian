@@ -2,14 +2,14 @@ import os
 import io
 import logging
 
-from objects import DocText, Document
+from objects import Document
 
 FORMAT = '%(asctime)s | %(pathname)s | %(vault_name)s | %(levelname)s - %(message)s'
 old_factory = logging.getLogRecordFactory()
 
 def record_factory(*args, **kwargs):
     record = old_factory(*args, **kwargs)
-    record.vault_name = 'THEORY'
+    record.vault_name = 'THEORY' # TODO: get vault here
     return record
 
 logging.setLogRecordFactory(record_factory)
@@ -20,7 +20,7 @@ logger = logging.getLogger('reader')
 class Reader(object):
     workdir: str|None = None
     document_pathes: list[str] = []
-    documets: set[Document]
+    documents: list[Document] = []
 
     ignore_folders: list[str] = ['git',]
 
@@ -34,6 +34,9 @@ class Reader(object):
             raise ValueError('Incorrect workdir!')
 
         self._get_documents()
+
+        for i, path in enumerate(self.document_pathes):
+            self.documents.append(Document(i, path))
 
 
     def _get_documents(self):
